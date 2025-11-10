@@ -31,11 +31,11 @@ const CPicker = {
         const hsv = CPicker.rgb2hsv(CPicker.rgba);
         const rgb = CPicker.hueToRGB(hsv.h);
         this.id.cpickerSvbox.style.backgroundColor = `rgb(${rgb.r},${rgb.g},${rgb.b})`;
-
+        CPicker.hsv = hsv;
     },
 
     /* -------------------------------------------------------*/
-
+ 
     rgba: {
         r: 255,
         g: 255,
@@ -77,9 +77,11 @@ const CPicker = {
     },
 
     events: function() {
-        this.id.cpickerCodeswitch.addEventListener('change', this.cpickerCodeswitchEventCallback);
-        this.id.cpickerSvbox.addEventListener('pointerdown', CPicker.pointerDown);
+        this.id.cpickerCodeswitch.addEventListener('change', this.cpickerCodeswitchEventCallback);        
         this.id.colorpalate.addEventListener('click', CPicker.click);
+        this.id.cpickerSvbox.addEventListener('pointerdown', CPicker.pointerDown);
+        this.id.cpickerSvbox.addEventListener('pointermove', CPicker.pointerMove);
+        this.id.cpickerSvbox.addEventListener('pointerup', CPicker.pointerUp);
     },
 
     rgb2hsv: function(rgb) {
@@ -249,16 +251,17 @@ const CPicker = {
 
     click: function(e) {
         const rgba = window.getComputedStyle(e.target)['background-color'];
-        CPicker.updateUIByCSSRGBA(rgba);
-
+        CPicker.updateUIByCSSRGBA(rgba);        
     },
 
     pointerDown: function(e) {
-
+        const rgb = CPicker.getRGBThroughSVBoxXY(e.clientX, e.clientY);
+        result.style.backgroundColor = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
     },
 
     pointerMove: function(e) {
-
+        const rgb = CPicker.getRGBThroughSVBoxXY(e.clientX, e.clientY);
+        result.style.backgroundColor = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
     },
 
     pointerUp: function(e) {
