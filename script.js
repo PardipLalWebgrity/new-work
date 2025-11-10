@@ -8,8 +8,7 @@ const CPicker = {
     },
 
     getRGBThroughSVBoxXY: function(x, y) {
-        const hsv = CPicker.getHSVFromSVBoxThroughXY(x, y);
-        console.log(hsv);
+        const hsv = CPicker.getHSVFromSVBoxThroughXY(x, y);       
         const rgb = CPicker.hsv2rgb(hsv);
         return rgb;
     },
@@ -34,6 +33,36 @@ const CPicker = {
         CPicker.hsv = hsv;
     },
 
+    
+    updateUIs: function(uis){
+
+        // SV Box        
+        // Hue Slider
+        // Alpha Slider
+        // RGB Inputs
+        // Alpha Input
+
+    },
+
+    updateSVBoxPointerUIByPointerEvent: function(e){
+        const rgb = CPicker.getRGBThroughSVBoxXY(e.clientX, e.clientY);
+        const rgbCSS = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+        result.style.backgroundColor = rgbCSS;        
+      
+        let x = e.clientX-6;
+        let y = e.clientY-6;
+        if(x>CPicker.svBoxWidth-6) x = CPicker.svBoxWidth-6;
+        if(y>CPicker.svBoxHeight-6) y = CPicker.svBoxHeight-6;
+        if(x<0) x = -6;
+        if(y<0) y = -6;        
+
+        CPicker.id.cpickerSvboxPointer.style.left = x+'px';
+        CPicker.id.cpickerSvboxPointer.style.top = y+'px';
+    },
+
+
+
+
     /* -------------------------------------------------------*/
  
     rgba: {
@@ -51,7 +80,11 @@ const CPicker = {
 
     id: {},
 
+    svBoxWidth: 0,
+    svBoxHeight: 0,
+
     collectElements: function() {
+        this.id.cpicker = document.querySelector('#cpicker');
         this.id.cpickerCodeswitch = document.querySelector('#cpicker-codeswitch');
         this.id.cpickerInputsWrapper = document.querySelector('#cpicker-inputs-wrapper');
         this.id.cpickerInputAlpha = document.querySelector('#cpicker-input-alpha');
@@ -255,17 +288,18 @@ const CPicker = {
     },
 
     pointerDown: function(e) {
-        const rgb = CPicker.getRGBThroughSVBoxXY(e.clientX, e.clientY);
-        result.style.backgroundColor = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+        CPicker.id.cpickerSvbox.setPointerCapture(e.pointerId);
+        CPicker.updateSVBoxPointerUIByPointerEvent(e);
     },
 
     pointerMove: function(e) {
-        const rgb = CPicker.getRGBThroughSVBoxXY(e.clientX, e.clientY);
-        result.style.backgroundColor = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+        if(! CPicker.id.cpickerSvbox.hasPointerCapture(e.pointerId)) return;
+        CPicker.updateSVBoxPointerUIByPointerEvent(e);
     },
 
     pointerUp: function(e) {
-
+        CPicker.id.cpickerSvbox.releasePointerCapture(e.pointerId);
+        CPicker.updateSVBoxPointerUIByPointerEvent(e);
     },
 
     inputChange: function(e) {
