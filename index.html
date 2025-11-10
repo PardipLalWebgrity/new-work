@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<div class="cpicker">
+
+		<div class="cpicker-svbox" id="cpicker-svbox">
+			<span class="cpicker-svbox-pointer"></span>
+		</div>
+
+		<div class="cpicker-hueslider">
+			<input type="range">
+		</div>
+
+		<div class="cpicker-alphaslider">
+			<div class="cpicker-alphaslider-bg">
+				<input type="range">
+			</div>
+		</div>
+
+		<div class="cpicker-form">
+			<select id="cpicker-codeswitch">
+				<option value="rgb">RGBA</option>
+				<option value="hex">HEXA</option>
+			</select>
+			<div id="cpicker-inputs-wrapper" class="cpicker-inputs-wrapper">
+				<div class="cpicker-inputs cpicker-inputs-rgb show">
+					<input type="number" class="cpicker-input">
+					<input type="number" class="cpicker-input">
+					<input type="number" class="cpicker-input">
+				</div>
+				<div class="cpicker-inputs cpicker-inputs-hex">
+					<input type="text" class="cpicker-input">					
+				</div>
+				<div class="cpicker-inputs cpicker-input-alpha show" id="cpicker-input-alpha">
+					<input type="text" class="cpicker-input">					
+				</div>
+			</div>
+		</div>
+		
+	</div>
+
+	<script src="script.js"></script>
+</body>
+</html>
