@@ -44,8 +44,16 @@ const CPicker = {
 
     },
 
+    updateAlphaUI: function(rgba){
+        this.id.cpickerAlphasliderBg.style.background = `linear-gradient(to right, rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, 0) 0%, rgb(${rgba.r}, ${rgba.g}, ${rgba.b}) 100%)`
+    },
+
+    updateRGBAInputs: function(rgb){
+        console.log(rgb);
+    },
+
     updateSVBoxPointerUIByPointerEvent: function(e){
-        const rgb = CPicker.getRGBThroughSVBoxXY(e.clientX, e.clientY);
+        const rgb = CPicker.getRGBThroughSVBoxXY(e.clientX, e.clientY);        
         const rgbCSS = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
         result.style.backgroundColor = rgbCSS;        
       
@@ -58,6 +66,9 @@ const CPicker = {
 
         CPicker.id.cpickerSvboxPointer.style.left = x+'px';
         CPicker.id.cpickerSvboxPointer.style.top = y+'px';
+
+        CPicker.updateAlphaUI(rgb);
+        CPicker.updateRGBAInputs(rgb);
     },
 
 
@@ -91,6 +102,7 @@ const CPicker = {
         this.id.cpickerSvbox = document.querySelector('#cpicker-svbox');
         this.id.cpickerSvboxPointer = document.querySelector('#cpicker-svbox-pointer');
         this.id.colorpalate = document.querySelector('#colorpalate');
+        this.id.cpickerAlphasliderBg = document.querySelector('#cpicker-alphaslider-bg');
     },
 
     updateAdditionalData() {
