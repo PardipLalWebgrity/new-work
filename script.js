@@ -2,8 +2,8 @@ const CPicker = {
 
     /* ---------------------------API ------------------------*/
     getCordinateFromRGB: function(rgb) {
-        const hsv = CPicker.rgb2hsv(rgb);       
-        const xy = CPicker.hsvToSVCoordinates(hsv);       
+        const hsv = CPicker.rgb2hsv(rgb);
+        const xy = CPicker.hsvToSVCoordinates(hsv);
         return xy;
     },
 
@@ -14,19 +14,39 @@ const CPicker = {
         return rgb;
     },
 
+    updateUIByCSSRGBA(cssRGBA) {
+        const rgba = cssRGBA.split('(')[1].split(')')[0].split(',');
+        if (rgba.length === 3) rgba.push('1');
+        CPicker.rgba.r = rgba[0];
+        CPicker.rgba.g = rgba[1];
+        CPicker.rgba.b = rgba[2];
+        CPicker.rgba.a = rgba[3];
+
+        // SV Box Pointer
+        const xy = CPicker.getCordinateFromRGB(CPicker.rgba);
+        this.id.cpickerSvboxPointer.style.left = xy.x - 6 + 'px';
+        this.id.cpickerSvboxPointer.style.top = xy.y - 4 + 'px';
+
+        // SV Box Color
+        const hsv = CPicker.rgb2hsv(CPicker.rgba);
+        const rgb = CPicker.hueToRGB(hsv.h);
+        this.id.cpickerSvbox.style.backgroundColor = `rgb(${rgb.r},${rgb.g},${rgb.b})`;
+
+    },
+
     /* -------------------------------------------------------*/
 
     rgba: {
         r: 255,
-        g: 0,
-        b: 0,
+        g: 255,
+        b: 255,
         a: 1,
     },
 
     hsv: {
-        h: 162,
-        s: 71,
-        v: 60,
+        h: 0,
+        s: 0,
+        v: 100,
     },
 
     id: {},
@@ -36,6 +56,8 @@ const CPicker = {
         this.id.cpickerInputsWrapper = document.querySelector('#cpicker-inputs-wrapper');
         this.id.cpickerInputAlpha = document.querySelector('#cpicker-input-alpha');
         this.id.cpickerSvbox = document.querySelector('#cpicker-svbox');
+        this.id.cpickerSvboxPointer = document.querySelector('#cpicker-svbox-pointer');
+        this.id.colorpalate = document.querySelector('#colorpalate');
     },
 
     updateAdditionalData() {
@@ -56,36 +78,38 @@ const CPicker = {
 
     events: function() {
         this.id.cpickerCodeswitch.addEventListener('change', this.cpickerCodeswitchEventCallback);
+        this.id.cpickerSvbox.addEventListener('pointerdown', CPicker.pointerDown);
+        this.id.colorpalate.addEventListener('click', CPicker.click);
     },
 
-    rgb2hsv: function(rgb){
-       // Step 1 - Normalize
-       const normRGB = {
-         r: rgb.r/255,
-         g: rgb.g/255,
-         b: rgb.b/255,
-       }
+    rgb2hsv: function(rgb) {
+        // Step 1 - Normalize
+        const normRGB = {
+            r: rgb.r / 255,
+            g: rgb.g / 255,
+            b: rgb.b / 255,
+        }
 
-       // Step 2 - Min, Max, Delta
-       const min = Math.min(...Object.values(normRGB));
-       const max = Math.max(...Object.values(normRGB));
-       const delta = (max-min);
+        // Step 2 - Min, Max, Delta
+        const min = Math.min(...Object.values(normRGB));
+        const max = Math.max(...Object.values(normRGB));
+        const delta = (max - min);
 
-       // Step 3 - V & S
-       const v = Math.round(max*100);
-       const s = Math.round((max == 0 ? 0 : delta/max)*100);
+        // Step 3 - V & S
+        const v = Math.round(max * 100);
+        const s = Math.round((max == 0 ? 0 : delta / max) * 100);
 
-       // Step 4 - H
-       let h = 0;
-       if(max == normRGB.r) h = 60*((normRGB.g-normRGB.b)/delta);
-       if(max == normRGB.g) h = 60*((normRGB.b-normRGB.r)/delta+2);
-       if(max == normRGB.b) h = 60*((normRGB.r-normRGB.g)/delta+4);
-       if(delta == 0) h = 0;
-       if(h < 0) h += 360;
-       h = Math.round(h)
+        // Step 4 - H
+        let h = 0;
+        if (max == normRGB.r) h = 60 * ((normRGB.g - normRGB.b) / delta);
+        if (max == normRGB.g) h = 60 * ((normRGB.b - normRGB.r) / delta + 2);
+        if (max == normRGB.b) h = 60 * ((normRGB.r - normRGB.g) / delta + 4);
+        if (delta == 0) h = 0;
+        if (h < 0) h += 360;
+        h = Math.round(h)
 
-       return {h,s,v};
-     },
+        return { h, s, v };
+    },
 
     hsv2rgb: function(h, s, v) {
         var r, g, b, i, f, p, q, t;
@@ -162,19 +186,92 @@ const CPicker = {
         return { h, s, v };
     },
 
-    getHueFromX: function(x) {
-        x = Math.max(0, Math.min(CPicker.svBoxWidth, x));
-        return (x / CPicker.svBoxWidth) * 360;
+    hueToRGB: function(H) {
+        let S = 1;
+        let V = 1;
+
+        let h = H / 60;
+        let i = Math.floor(h);
+        let f = h - i;
+        let p = V * (1 - S);
+        let q = V * (1 - f * S);
+        let t = V * (1 - (1 - f) * S);
+
+        let r, g, b;
+        switch (i % 6) {
+            case 0:
+                r = V;
+                g = t;
+                b = p;
+                break;
+            case 1:
+                r = q;
+                g = V;
+                b = p;
+                break;
+            case 2:
+                r = p;
+                g = V;
+                b = t;
+                break;
+            case 3:
+                r = p;
+                g = q;
+                b = V;
+                break;
+            case 4:
+                r = t;
+                g = p;
+                b = V;
+                break;
+            case 5:
+                r = V;
+                g = p;
+                b = q;
+                break;
+        }
+
+        // Convert 0-1 to 0-255
+        r = Math.round(r * 255);
+        g = Math.round(g * 255);
+        b = Math.round(b * 255);
+
+        return {r,g,b};
     },
 
     init: function() {
         CPicker.collectElements();
         CPicker.updateAdditionalData();
-        CPicker.events();    
-
-        let a = CPicker.getRGBThroughSVBoxXY(136,74);    
-        console.log(a);
+        CPicker.events();
     },
+
+    /* Events Callback */
+
+    click: function(e) {
+        const rgba = window.getComputedStyle(e.target)['background-color'];
+        CPicker.updateUIByCSSRGBA(rgba);
+
+    },
+
+    pointerDown: function(e) {
+
+    },
+
+    pointerMove: function(e) {
+
+    },
+
+    pointerUp: function(e) {
+
+    },
+
+    inputChange: function(e) {
+
+    },
+
+    input: function(e) {
+
+    }
 
 }
 
