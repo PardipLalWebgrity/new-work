@@ -1,50 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Document</title>
-	<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+    	.colorpalate{display: flex;flex-wrap: wrap;gap:8px;max-width: 300px;margin-top:30px;}
+    	.colorpalate > span{width:30px;aspect-ratio:1/1;}
+    </style>
 </head>
+
 <body>
-	<div class="cpicker">
+    <div class="cpicker">
+        <div class="cpicker-svbox" id="cpicker-svbox">
+            <span id="cpicker-svbox-pointer" class="cpicker-svbox-pointer"></span>
+        </div>
+        <div class="cpicker-hueslider">
+            <input type="range">
+        </div>
+        <div class="cpicker-alphaslider">
+            <div class="cpicker-alphaslider-bg">
+                <input type="range">
+            </div>
+        </div>
+        <div class="cpicker-form">
+            <select id="cpicker-codeswitch">
+                <option value="rgb">RGBA</option>
+                <option value="hex">HEXA</option>
+            </select>
+            <div id="cpicker-inputs-wrapper" class="cpicker-inputs-wrapper">
+                <div class="cpicker-inputs cpicker-inputs-rgb show">
+                    <input type="number" class="cpicker-input">
+                    <input type="number" class="cpicker-input">
+                    <input type="number" class="cpicker-input">
+                </div>
+                <div class="cpicker-inputs cpicker-inputs-hex">
+                    <input type="text" class="cpicker-input">
+                </div>
+                <div class="cpicker-inputs cpicker-input-alpha show" id="cpicker-input-alpha" min="0" max="1" step="0.01">
+                    <input type="text" class="cpicker-input">
+                </div>
+            </div>
+        </div>
+    </div>
 
-		<div class="cpicker-svbox" id="cpicker-svbox">
-			<span class="cpicker-svbox-pointer"></span>
-		</div>
-
-		<div class="cpicker-hueslider">
-			<input type="range">
-		</div>
-
-		<div class="cpicker-alphaslider">
-			<div class="cpicker-alphaslider-bg">
-				<input type="range">
-			</div>
-		</div>
-
-		<div class="cpicker-form">
-			<select id="cpicker-codeswitch">
-				<option value="rgb">RGBA</option>
-				<option value="hex">HEXA</option>
-			</select>
-			<div id="cpicker-inputs-wrapper" class="cpicker-inputs-wrapper">
-				<div class="cpicker-inputs cpicker-inputs-rgb show">
-					<input type="number" class="cpicker-input">
-					<input type="number" class="cpicker-input">
-					<input type="number" class="cpicker-input">
-				</div>
-				<div class="cpicker-inputs cpicker-inputs-hex">
-					<input type="text" class="cpicker-input">					
-				</div>
-				<div class="cpicker-inputs cpicker-input-alpha show" id="cpicker-input-alpha">
-					<input type="text" class="cpicker-input">					
-				</div>
-			</div>
-		</div>
-		
-	</div>
-
-	<script src="script.js"></script>
+    <div id="colorpalate" class="colorpalate">
+    	<span style="background-color: #FF595E;"></span>
+			  <span style="background-color: #FFCA3A;"></span>
+			  <span style="background-color: #8AC926;"></span>
+			  <span style="background-color: #1982C4;"></span>
+			  <span style="background-color: #6A4C93;"></span>
+			  <span style="background-color: #FF924C;"></span>
+			  <span style="background-color: #FF6B6B;"></span>
+			  <span style="background-color: #F0A500;"></span>
+			  <span style="background-color: #3D84A8;"></span>
+			  <span style="background-color: #7D5A50;"></span>
+			  <span style="background-color: #6B4226;"></span>
+			  <span style="background-color: #B5179E;"></span>
+			  <span style="background-color: #7209B7;"></span>
+			  <span style="background-color: #560BAD;"></span>
+			  <span style="background-color: #480CA8;"></span>
+			  <span style="background-color: #3A0CA3;"></span>
+			  <span style="background-color: #4361EE;"></span>
+			  <span style="background-color: #4CC9F0;"></span>
+			  <span style="background-color: #F72585;"></span>
+			  <span style="background-color: #720026;"></span>
+    </div>
+    <script src="script.js"></script>
 </body>
+
 </html>
