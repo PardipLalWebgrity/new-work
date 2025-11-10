@@ -1,162 +1,180 @@
 const CPicker = {
 
-	/* ---------------------------API ------------------------*/
-	getCordinateFromRGB: function (rgb) {
-		const xy = CPicker.hsvToSVCoordinates(CPicker.rgb2hsv(rgb.r, rgb.g, rgb.b));
-		return xy;
-	},
+    /* ---------------------------API ------------------------*/
+    getCordinateFromRGB: function(rgb) {
+        const hsv = CPicker.rgb2hsv(rgb);       
+        const xy = CPicker.hsvToSVCoordinates(hsv);       
+        return xy;
+    },
 
-	getRGBThroughSVBoxXY: function (x, y) {
-		const hsv = CPicker.getHSVFromSVBoxThroughXY(x, y);
-		const rgb = CPicker.hsv2rgb(hsv);
-		return rgb;
-	},
+    getRGBThroughSVBoxXY: function(x, y) {
+        const hsv = CPicker.getHSVFromSVBoxThroughXY(x, y);
+        console.log(hsv);
+        const rgb = CPicker.hsv2rgb(hsv);
+        return rgb;
+    },
 
-	/* -------------------------------------------------------*/
+    /* -------------------------------------------------------*/
 
-	rgba: {
-		r: 255,
-		g: 0,
-		b: 0,
-		a: 1,
-	},
+    rgba: {
+        r: 255,
+        g: 0,
+        b: 0,
+        a: 1,
+    },
 
-	hsv: {
-		h: 0,
-		s: 100,
-		v: 100,
-	},
+    hsv: {
+        h: 162,
+        s: 71,
+        v: 60,
+    },
 
-	id: {},
+    id: {},
 
-	collectElements: function () {
-		this.id.cpickerCodeswitch = document.querySelector('#cpicker-codeswitch');
-		this.id.cpickerInputsWrapper = document.querySelector('#cpicker-inputs-wrapper');
-		this.id.cpickerInputAlpha = document.querySelector('#cpicker-input-alpha');
-		this.id.cpickerSvbox = document.querySelector('#cpicker-svbox');	
-	},
+    collectElements: function() {
+        this.id.cpickerCodeswitch = document.querySelector('#cpicker-codeswitch');
+        this.id.cpickerInputsWrapper = document.querySelector('#cpicker-inputs-wrapper');
+        this.id.cpickerInputAlpha = document.querySelector('#cpicker-input-alpha');
+        this.id.cpickerSvbox = document.querySelector('#cpicker-svbox');
+    },
 
-	updateAdditionalData(){
-		CPicker.svBoxWidth = this.id.cpickerSvbox.offsetWidth;
-		CPicker.svBoxHeight = this.id.cpickerSvbox.offsetHeight;
-	},
+    updateAdditionalData() {
+        CPicker.svBoxWidth = this.id.cpickerSvbox.offsetWidth;
+        CPicker.svBoxHeight = this.id.cpickerSvbox.offsetHeight;
+    },
 
-	cpickerCodeswitchEventCallback: function (e) {
-		const value = CPicker.id.cpickerCodeswitch.value;
-		const codeBlockEl = document.querySelector(`.cpicker-inputs-${value}`);
-		[...CPicker.id.cpickerInputsWrapper.children].forEach((el) => {
-			el.classList.remove('show');
-		})
-		codeBlockEl.classList.add('show');
-		CPicker.id.cpickerInputAlpha.classList.add('show');
+    cpickerCodeswitchEventCallback: function(e) {
+        const value = CPicker.id.cpickerCodeswitch.value;
+        const codeBlockEl = document.querySelector(`.cpicker-inputs-${value}`);
+        [...CPicker.id.cpickerInputsWrapper.children].forEach((el) => {
+            el.classList.remove('show');
+        })
+        codeBlockEl.classList.add('show');
+        CPicker.id.cpickerInputAlpha.classList.add('show');
 
-	},
+    },
 
-	events: function () {
-		this.id.cpickerCodeswitch.addEventListener('change', this.cpickerCodeswitchEventCallback);
-	},
+    events: function() {
+        this.id.cpickerCodeswitch.addEventListener('change', this.cpickerCodeswitchEventCallback);
+    },
 
-	rgb2hsv: function (r, g, b) {
-		let rabs, gabs, babs, rr, gg, bb, h, s, v, diff, diffc, percentRoundFn;
-		rabs = r / 255;
-		gabs = g / 255;
-		babs = b / 255;
-		v = Math.max(rabs, gabs, babs),
-			diff = v - Math.min(rabs, gabs, babs);
-		diffc = c => (v - c) / 6 / diff + 1 / 2;
-		percentRoundFn = num => Math.round(num * 100) / 100;
-		if (diff == 0) {
-			h = s = 0;
-		} else {
-			s = diff / v;
-			rr = diffc(rabs);
-			gg = diffc(gabs);
-			bb = diffc(babs);
+    rgb2hsv: function(rgb){
+       // Step 1 - Normalize
+       const normRGB = {
+         r: rgb.r/255,
+         g: rgb.g/255,
+         b: rgb.b/255,
+       }
 
-			if (rabs === v) {
-				h = bb - gg;
-			} else if (gabs === v) {
-				h = (1 / 3) + rr - bb;
-			} else if (babs === v) {
-				h = (2 / 3) + gg - rr;
-			}
-			if (h < 0) {
-				h += 1;
-			} else if (h > 1) {
-				h -= 1;
-			}
-		}
-		
-		return {
-			h: Math.round(h * 360),
-			s: percentRoundFn(s * 100),
-			v: percentRoundFn(v * 100)
-		};
-	},
+       // Step 2 - Min, Max, Delta
+       const min = Math.min(...Object.values(normRGB));
+       const max = Math.max(...Object.values(normRGB));
+       const delta = (max-min);
 
-	hsv2rgb: function (h, s, v) {
-		var r, g, b, i, f, p, q, t;
-		if (arguments.length === 1) {
-			s = h.s;
-			v = h.v;
-			h = h.h;
-		}
+       // Step 3 - V & S
+       const v = Math.round(max*100);
+       const s = Math.round((max == 0 ? 0 : delta/max)*100);
 
-		h = h / 360;
-		s = s / 100;
-		v = v / 100;
+       // Step 4 - H
+       let h = 0;
+       if(max == normRGB.r) h = 60*((normRGB.g-normRGB.b)/delta);
+       if(max == normRGB.g) h = 60*((normRGB.b-normRGB.r)/delta+2);
+       if(max == normRGB.b) h = 60*((normRGB.r-normRGB.g)/delta+4);
+       if(delta == 0) h = 0;
+       if(h < 0) h += 360;
+       h = Math.round(h)
 
-		i = Math.floor(h * 6);
-		f = h * 6 - i;
-		p = v * (1 - s);
-		q = v * (1 - f * s);
-		t = v * (1 - (1 - f) * s);
+       return {h,s,v};
+     },
 
-		switch (i % 6) {
-			case 0: r = v; g = t; b = p; break;
-			case 1: r = q; g = v; b = p; break;
-			case 2: r = p; g = v; b = t; break;
-			case 3: r = p; g = q; b = v; break;
-			case 4: r = t; g = p; b = v; break;
-			case 5: r = v; g = p; b = q; break;
-		}
+    hsv2rgb: function(h, s, v) {
+        var r, g, b, i, f, p, q, t;
+        if (arguments.length === 1) {
+            s = h.s;
+            v = h.v;
+            h = h.h;
+        }
 
-		return {
-			r: Math.round(r * 255),
-			g: Math.round(g * 255),
-			b: Math.round(b * 255)
-		};
-	},
+        h = h / 360;
+        s = s / 100;
+        v = v / 100;
 
-	hsvToSVCoordinates: function (hsv) {
-		const x = (hsv.s / 100) * CPicker.svBoxWidth;
-		const y = (1 - hsv.v / 100) * CPicker.svBoxHeight;
-		return { x, y };
-	},
+        i = Math.floor(h * 6);
+        f = h * 6 - i;
+        p = v * (1 - s);
+        q = v * (1 - f * s);
+        t = v * (1 - (1 - f) * s);
 
-	getHSVFromSVBoxThroughXY: function (x, y) {
-		const h = CPicker.hsv.h;
-		x = Math.max(0, Math.min(CPicker.svBoxWidth, x));
-		y = Math.max(0, Math.min(CPicker.svBoxHeight, y));
+        switch (i % 6) {
+            case 0:
+                r = v;
+                g = t;
+                b = p;
+                break;
+            case 1:
+                r = q;
+                g = v;
+                b = p;
+                break;
+            case 2:
+                r = p;
+                g = v;
+                b = t;
+                break;
+            case 3:
+                r = p;
+                g = q;
+                b = v;
+                break;
+            case 4:
+                r = t;
+                g = p;
+                b = v;
+                break;
+            case 5:
+                r = v;
+                g = p;
+                b = q;
+                break;
+        }
 
-		const s = (x / CPicker.svBoxWidth) * 100;
-		const v = (1 - y / CPicker.svBoxHeight) * 100;
+        return {
+            r: Math.round(r * 255),
+            g: Math.round(g * 255),
+            b: Math.round(b * 255)
+        };
+    },
 
-		return { h, s, v };
-	},
+    hsvToSVCoordinates: function(hsv) {
+        const x = (hsv.s / 100) * CPicker.svBoxWidth;
+        const y = (1 - hsv.v / 100) * CPicker.svBoxHeight;
+        return { x, y };
+    },
 
-	getHueFromX: function (x) {
-		x = Math.max(0, Math.min(CPicker.svBoxWidth, x));
-		return (x / CPicker.svBoxWidth) * 360;
-	},
+    getHSVFromSVBoxThroughXY: function(x, y) {
+        const h = CPicker.hsv.h;
+        x = Math.max(0, Math.min(CPicker.svBoxWidth, x));
+        y = Math.max(0, Math.min(CPicker.svBoxHeight, y));
 
-	init: function () {		
-		CPicker.collectElements();
-		CPicker.updateAdditionalData();
-		CPicker.events();	
-		console.log(CPicker.getCordinateFromRGB({r:66, g:135, b:245}));
-		
-	},
+        const s = (x / CPicker.svBoxWidth) * 100;
+        const v = (1 - y / CPicker.svBoxHeight) * 100;
+
+        return { h, s, v };
+    },
+
+    getHueFromX: function(x) {
+        x = Math.max(0, Math.min(CPicker.svBoxWidth, x));
+        return (x / CPicker.svBoxWidth) * 360;
+    },
+
+    init: function() {
+        CPicker.collectElements();
+        CPicker.updateAdditionalData();
+        CPicker.events();    
+
+        let a = CPicker.getRGBThroughSVBoxXY(136,74);    
+        console.log(a);
+    },
 
 }
 
