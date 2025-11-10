@@ -1,8 +1,8 @@
 
 *{padding: 0;margin: 0;box-sizing: border-box;}
 
-.cpicker{width: 200px;display: flex;flex-direction: column;gap:5px;}
-.cpicker-svbox {width: 100%;aspect-ratio: 1/1;background:linear-gradient(to top, #000 0%, rgb(0 0 0 / 0) 100%),linear-gradient(to right, #fff 0%, rgb(255 255 255 / 0) 100%);background-color: red;position: relative;}
+.cpicker{width: 446px;display: flex;flex-direction: column;gap:5px;}
+.cpicker-svbox {width: 100%;height:228px;background:linear-gradient(to top, #000 0%, rgb(0 0 0 / 0) 100%),linear-gradient(to right, #fff 0%, rgb(255 255 255 / 0) 100%);background-color: red;position: relative;}
 .cpicker-svbox-pointer{position: absolute;top:50px;left:100px;width:7px;height:7px;border-radius: 50%;outline:1px solid #fff;transform: translate(-50%,-50%);pointer-events: none;}
 
 .cpicker-hueslider{height: 20px;background: linear-gradient( to right, #f00 0%, #ff0 16.66%, #0f0 33.33%, #0ff 50%, #00f 66.66%, #f0f 83.33%, rgb(255, 0, 0) 100% );position: relative;}
