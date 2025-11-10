@@ -154,7 +154,7 @@ const CPicker = {
 		CPicker.collectElements();
 		CPicker.updateAdditionalData();
 		CPicker.events();	
-		console.log(CPicker.getCordinateFromRGB({r:255, g:0, b:0}));
+		console.log(CPicker.getCordinateFromRGB({r:66, g:135, b:245}));
 		
 	},
 
