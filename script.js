@@ -1,104 +1,13 @@
 const CPicker = {
 
-    /* ---------------------------API ------------------------*/
-    getCordinateFromRGB: function(rgb) {
-        const hsv = CPicker.rgb2hsv(rgb);
-        const xy = CPicker.hsvToSVCoordinates(hsv);
-        return xy;
-    },
+    // API
 
-    getRGBThroughSVBoxXY: function(x, y) {
-        const hsv = CPicker.getHSVFromSVBoxThroughXY(x, y);
-        const rgb = CPicker.hsv2rgb(hsv);
-        return rgb;
-    },
-
-    updateUIByCSSRGBA(cssRGBA) {
-        const rgba = cssRGBA.split('(')[1].split(')')[0].split(',');
-        if (rgba.length === 3) rgba.push('1');
-        CPicker.rgba.r = rgba[0];
-        CPicker.rgba.g = rgba[1];
-        CPicker.rgba.b = rgba[2];
-        CPicker.rgba.a = rgba[3];
-
-        // SV Box Pointer
-        const xy = CPicker.getCordinateFromRGB(CPicker.rgba);
-        this.id.cpickerSvboxPointer.style.left = xy.x - 6 + 'px';
-        this.id.cpickerSvboxPointer.style.top = xy.y - 4 + 'px';
-
-        // SV Box Color
-        const hsv = CPicker.rgb2hsv(CPicker.rgba);
-        const rgb = CPicker.hueToRGB(hsv.h);
-        this.id.cpickerSvbox.style.backgroundColor = `rgb(${rgb.r},${rgb.g},${rgb.b})`;
-        CPicker.hsv = hsv;
-    },
-
-
-    updateUIs: function(uis) {
-
-        // SV Box        
-        // Hue Slider
-        // Alpha Slider
-        // RGB Inputs
-        // Alpha Input
-
-    },
-
-    updateSVBoxBaseColor: function(rgb) {
-        this.id.cpickerSvbox.style.backgroundColor = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
-        const hsv = CPicker.rgb2hsv(rgb);
-        CPicker.hsv.h = hsv.h;
-    }, 
-
-    updateAlphaSliderColorUI: function() {
-        const rgba = CPicker.rgba;
-        this.id.cpickerAlphasliderBg.style.background = `linear-gradient(to right, rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, 0) 0%, rgb(${rgba.r}, ${rgba.g}, ${rgba.b}) 100%)`
-    },    
-
-    updateRGBInputs: function(rgb) {
-        this.id.inputrgbR.value = rgb.r;
-        this.id.inputrgbG.value = rgb.g;
-        this.id.inputrgbB.value = rgb.b;
-    },
-
-    updateHexInput: function(rgb) {
-        const hexValue = CPicker.rgbToHex(rgb);
-        this.id.inputhex.value = hexValue;
-    },
-
-    updateAlphaInput: function(){
-
-    },
-
-    updateSVBoxPointerUIByPointerEvent: function(e) {
-        const rgb = CPicker.getRGBThroughSVBoxXY(e.clientX, e.clientY);        
-        Object.assign(CPicker.rgba, rgb);
-        const rgbCSS = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b}, ${CPicker.rgba.a})`;
-        result.style.backgroundColor = rgbCSS;
-
-        let x = e.clientX - 6;
-        let y = e.clientY - 6;
-        if (x > CPicker.svBoxWidth - 6) x = CPicker.svBoxWidth - 6;
-        if (y > CPicker.svBoxHeight - 6) y = CPicker.svBoxHeight - 6;
-        if (x < 0) x = -6;
-        if (y < 0) y = -6;
-
-        CPicker.id.cpickerSvboxPointer.style.left = x + 'px';
-        CPicker.id.cpickerSvboxPointer.style.top = y + 'px';
-
-        CPicker.updateAlphaSliderColorUI(rgb);
-        CPicker.updateRGBInputs(rgb);
-        CPicker.updateHexInput(rgb);  
-    },
-
-
-    /* -------------------------------------------------------*/
-
+    // Variables
     rgba: {
-        r: 255,
-        g: 255,
-        b: 255,
-        a: 1,
+        r: 198,
+        g: 14,
+        b: 14,
+        a: 80,
     },
 
     hsv: {
@@ -133,29 +42,160 @@ const CPicker = {
         this.id.inputhex = document.querySelector('#inputhex');
     },
 
-    updateAdditionalData() {
-        CPicker.svBoxWidth = this.id.cpickerSvbox.offsetWidth;
-        CPicker.svBoxHeight = this.id.cpickerSvbox.offsetHeight;
+    // SV Box
+    updateSVBoxBaseColor: function(){
+        const hsv = CPicker.rgb2hsv(CPicker.rgba);
+        const rgb = CPicker.hueToRGB(hsv.h);
+        this.id.cpickerSvbox.style.backgroundColor = `rgb(${rgb.r},${rgb.g},${rgb.b})`;
+        CPicker.hsv = hsv;      
     },
 
-    cpickerCodeswitchEventCallback: function(e) {
-        const value = CPicker.id.cpickerCodeswitch.value;
-        const codeBlockEl = document.querySelector(`.cpicker-inputs-${value}`);
-        [...CPicker.id.cpickerInputsWrapper.children].forEach((el) => {
-            el.classList.remove('show');
-        })
-        codeBlockEl.classList.add('show');
-        CPicker.id.cpickerInputAlpha.classList.add('show');
+    updateSVBoxPointer: function(){        
+        const hsv = CPicker.rgb2hsv(CPicker.rgba);
+        const xy = CPicker.hsvToSVCoordinates(hsv);
+        this.id.cpickerSvboxPointer.style.left = xy.x - 6 + 'px';
+        this.id.cpickerSvboxPointer.style.top = xy.y - 4 + 'px';
     },
 
-    events: function() {
-        this.id.cpickerCodeswitch.addEventListener('change', this.cpickerCodeswitchEventCallback);
-        this.id.colorpalate.addEventListener('click', CPicker.click);
-        this.id.cpickerSvbox.addEventListener('pointerdown', CPicker.svBoxPointerDown);
-        this.id.cpickerSvbox.addEventListener('pointermove', CPicker.svBoxPointerMove);
-        this.id.cpickerSvbox.addEventListener('pointerup', CPicker.svBoxPointerUp);
-        this.id.inputsliderHue.addEventListener('input', CPicker.hueSliderInput);
-        this.id.inputsliderAlpha.addEventListener('input', CPicker.alphaSliderInput);
+    updateSVBoxPointerUIByPointerEvent: function(e) {
+        const rgb = CPicker.getRGBThroughSVBoxXY(e.clientX, e.clientY);        
+        Object.assign(CPicker.rgba, rgb);
+        const rgbCSS = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b}, ${CPicker.rgba.a})`;        
+
+        let x = e.clientX - 6;
+        let y = e.clientY - 6;
+        if (x > CPicker.svBoxWidth - 6) x = CPicker.svBoxWidth - 6;
+        if (y > CPicker.svBoxHeight - 6) y = CPicker.svBoxHeight - 6;
+        if (x < 0) x = -6;
+        if (y < 0) y = -6;
+
+        CPicker.id.cpickerSvboxPointer.style.left = x + 'px';
+        CPicker.id.cpickerSvboxPointer.style.top = y + 'px';
+
+        CPicker.updateAlphaSliderColor();
+        CPicker.updateRGBInputs();
+        CPicker.updateHexInput();  
+    },
+
+    getRGBThroughSVBoxXY: function(x, y) {
+        const hsv = CPicker.getHSVFromSVBoxThroughXY(x, y);
+        const rgb = CPicker.hsv2rgb(hsv);
+        return rgb;
+    },
+
+    getHSVFromSVBoxThroughXY: function(x, y) {
+        const h = CPicker.hsv.h;
+        x = Math.max(0, Math.min(CPicker.svBoxWidth, x));
+        y = Math.max(0, Math.min(CPicker.svBoxHeight, y));
+
+        const s = (x / CPicker.svBoxWidth) * 100;
+        const v = (1 - y / CPicker.svBoxHeight) * 100;
+
+        return { h, s, v };
+    },
+
+    hsvToSVCoordinates: function(hsv) {
+        const x = (hsv.s / 100) * CPicker.svBoxWidth;
+        const y = (1 - hsv.v / 100) * CPicker.svBoxHeight;
+        return { x, y };
+    },
+
+
+    // Hue Slider
+    updateHueSliderPointer() {
+        const { r, g, b } = CPicker.rgba;
+        // Normalize RGB to [0,1]
+        const r1 = r / 255,
+            g1 = g / 255,
+            b1 = b / 255;
+        const max = Math.max(r1, g1, b1);
+        const min = Math.min(r1, g1, b1);
+        const delta = max - min;
+
+        let hue = 0;
+        if (delta !== 0) {
+            if (max === r1) {
+                hue = ((g1 - b1) / delta) % 6;
+            } else if (max === g1) {
+                hue = (b1 - r1) / delta + 2;
+            } else {
+                hue = (r1 - g1) / delta + 4;
+            }
+            hue *= 60;
+            if (hue < 0) hue += 360;
+        }
+
+        this.id.inputsliderHue.value = hue;
+    },
+
+    getHueGradientColorAt: function(percent) {
+        let rgb = null;
+        const stops = [
+            { pct: 0, color: [255, 0, 0] }, // red
+            { pct: 16.66, color: [255, 255, 0] }, // yellow
+            { pct: 33.33, color: [0, 255, 0] }, // green
+            { pct: 50.00, color: [0, 255, 255] }, // cyan
+            { pct: 66.66, color: [0, 0, 255] }, // blue
+            { pct: 83.33, color: [255, 0, 255] }, // magenta
+            { pct: 100.0, color: [255, 0, 0] } // red again
+        ];
+
+        // Clamp percentage
+        percent = Math.max(0, Math.min(100, percent));
+
+        // Find the two surrounding stops
+        for (let i = 0; i < stops.length - 1; i++) {
+            const stop1 = stops[i];
+            const stop2 = stops[i + 1];
+
+            if (percent >= stop1.pct && percent <= stop2.pct) {
+                const range = stop2.pct - stop1.pct;
+                const ratio = (percent - stop1.pct) / range;
+
+                const r = Math.round(stop1.color[0] + (stop2.color[0] - stop1.color[0]) * ratio);
+                const g = Math.round(stop1.color[1] + (stop2.color[1] - stop1.color[1]) * ratio);
+                const b = Math.round(stop1.color[2] + (stop2.color[2] - stop1.color[2]) * ratio);
+
+                rgb = { r, g, b };
+            }
+        }
+
+        // Fallback
+        return rgb;
+    },
+
+    // Alpha Slider
+    updateAlphaSliderColor: function() {
+        const rgba = CPicker.rgba;
+        this.id.cpickerAlphasliderBg.style.background = `linear-gradient(to right, rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, 0) 0%, rgb(${rgba.r}, ${rgba.g}, ${rgba.b}) 100%)`
+    },
+
+    // RGB Inputs
+    updateRGBInputs: function() {        
+        this.id.inputrgbR.value = CPicker.rgba.r;
+        this.id.inputrgbG.value = CPicker.rgba.g;
+        this.id.inputrgbB.value = CPicker.rgba.b;
+    },
+
+    // Hex Input
+    updateHexInput: function() {        
+        const hexValue = CPicker.rgbToHex(CPicker.rgba);
+        this.id.inputhex.value = hexValue;
+    },
+
+    // Alpha Input
+
+    // Utility Functions
+    rgbaStrint2Object: function(str){
+        const rgba = str.split('(')[1].split(')')[0].split(',');
+        if (rgba.length === 3) rgba.push('1');
+        const rgbaObject = {
+            r: +(rgba[0]),
+            g: +(rgba[1]),
+            b: +(rgba[2]),
+            a: +(rgba[3]),
+        }
+        return rgbaObject;
     },
 
     rgb2hsv: function(rgb) {
@@ -245,68 +285,6 @@ const CPicker = {
         };
     },
 
-    hsvToSVCoordinates: function(hsv) {
-        const x = (hsv.s / 100) * CPicker.svBoxWidth;
-        const y = (1 - hsv.v / 100) * CPicker.svBoxHeight;
-        return { x, y };
-    },
-
-    valueToHex: function(c) {
-        let hex = c.toString(16);
-        return hex.length == 1 ? "0" + hex : hex;
-    },
-
-    rgbToHex: function(rgb) {
-        return "#" + CPicker.valueToHex(rgb.r) + CPicker.valueToHex(rgb.g) + CPicker.valueToHex(rgb.b);
-    },
-
-    getHueGradientColorAt: function(percent) {
-        let rgb = null;
-        const stops = [
-            { pct: 0, color: [255, 0, 0] }, // red
-            { pct: 16.66, color: [255, 255, 0] }, // yellow
-            { pct: 33.33, color: [0, 255, 0] }, // green
-            { pct: 50.00, color: [0, 255, 255] }, // cyan
-            { pct: 66.66, color: [0, 0, 255] }, // blue
-            { pct: 83.33, color: [255, 0, 255] }, // magenta
-            { pct: 100.0, color: [255, 0, 0] } // red again
-        ];
-
-        // Clamp percentage
-        percent = Math.max(0, Math.min(100, percent));
-
-        // Find the two surrounding stops
-        for (let i = 0; i < stops.length - 1; i++) {
-            const stop1 = stops[i];
-            const stop2 = stops[i + 1];
-
-            if (percent >= stop1.pct && percent <= stop2.pct) {
-                const range = stop2.pct - stop1.pct;
-                const ratio = (percent - stop1.pct) / range;
-
-                const r = Math.round(stop1.color[0] + (stop2.color[0] - stop1.color[0]) * ratio);
-                const g = Math.round(stop1.color[1] + (stop2.color[1] - stop1.color[1]) * ratio);
-                const b = Math.round(stop1.color[2] + (stop2.color[2] - stop1.color[2]) * ratio);
-
-                rgb = { r, g, b };
-            }
-        }
-
-        // Fallback
-        return rgb;
-    },
-
-    getHSVFromSVBoxThroughXY: function(x, y) {
-        const h = CPicker.hsv.h;
-        x = Math.max(0, Math.min(CPicker.svBoxWidth, x));
-        y = Math.max(0, Math.min(CPicker.svBoxHeight, y));
-
-        const s = (x / CPicker.svBoxWidth) * 100;
-        const v = (1 - y / CPicker.svBoxHeight) * 100;
-
-        return { h, s, v };
-    },
-
     hueToRGB: function(H) {
         let S = 1;
         let V = 1;
@@ -360,17 +338,48 @@ const CPicker = {
         return { r, g, b };
     },
 
+    valueToHex: function(c) {
+        let hex = c.toString(16);
+        return hex.length == 1 ? "0" + hex : hex;
+    },
+
+    rgbToHex: function(rgb) {
+        return "#" + CPicker.valueToHex(rgb.r) + CPicker.valueToHex(rgb.g) + CPicker.valueToHex(rgb.b);
+    },
+
+
+    // Others
+
+    updateAdditionalData() {
+        CPicker.svBoxWidth = this.id.cpickerSvbox.offsetWidth;
+        CPicker.svBoxHeight = this.id.cpickerSvbox.offsetHeight;
+    },
+
     init: function() {
         CPicker.collectElements();
         CPicker.updateAdditionalData();
         CPicker.events();
     },
 
-    /* Events Callback */
-
     click: function(e) {
-        const rgba = window.getComputedStyle(e.target)['background-color'];
-        CPicker.updateUIByCSSRGBA(rgba);
+        const rgbaStr = window.getComputedStyle(e.target)['background-color'];
+        CPicker.rgba = CPicker.rgbaStrint2Object(rgbaStr);
+        CPicker.updateSVBoxBaseColor();
+        CPicker.updateSVBoxPointer();
+        CPicker.updateHueSliderPointer();
+        CPicker.updateRGBInputs();
+        CPicker.updateAlphaSliderColor();
+        CPicker.updateHexInput();
+    },
+
+    events: function() {
+        this.id.cpickerCodeswitch.addEventListener('change', this.cpickerCodeswitchEventCallback);
+        this.id.colorpalate.addEventListener('click', CPicker.click);
+        this.id.cpickerSvbox.addEventListener('pointerdown', CPicker.svBoxPointerDown);
+        this.id.cpickerSvbox.addEventListener('pointermove', CPicker.svBoxPointerMove);
+        this.id.cpickerSvbox.addEventListener('pointerup', CPicker.svBoxPointerUp);
+        this.id.inputsliderHue.addEventListener('input', CPicker.hueSliderInput);
+        this.id.inputsliderAlpha.addEventListener('input', CPicker.alphaSliderInput);
     },
 
     svBoxPointerDown: function(e) {
@@ -388,27 +397,31 @@ const CPicker = {
         CPicker.updateSVBoxPointerUIByPointerEvent(e);
     },
 
-    inputChange: function(e) {
-
-    },
-
     hueSliderInput: function(e) {        
         const percent = (CPicker.id.inputsliderHue.value / 360) * 100;
-        const rgb = CPicker.getHueGradientColorAt(percent);        
-        CPicker.updateRGBInputs(rgb);
-        CPicker.updateHexInput(rgb);
-        CPicker.updateSVBoxBaseColor(rgb);
+        const rgb = CPicker.getHueGradientColorAt(percent);
         Object.assign(CPicker.rgba, rgb);
-        console.log(CPicker.rgba.a);
-        result.style.backgroundColor = `rgba(${CPicker.rgba.r}, ${CPicker.rgba.g}, ${CPicker.rgba.b}, ${CPicker.rgba.a})`;  
+        CPicker.updateSVBoxBaseColor();
+        CPicker.updateRGBInputs();
+        CPicker.updateAlphaSliderColor();
+        CPicker.updateHexInput();  
     },
 
     alphaSliderInput: function(e) {        
         const value = CPicker.id.inputsliderAlpha.value;
         CPicker.id.inputalpha.value = value;
         CPicker.rgba.a = value/100;
-        result.style.backgroundColor = `rgba(${CPicker.rgba.r}, ${CPicker.rgba.g}, ${CPicker.rgba.b}, ${CPicker.rgba.a})`;        
     },
+
+    cpickerCodeswitchEventCallback: function(e) {
+        const value = CPicker.id.cpickerCodeswitch.value;
+        const codeBlockEl = document.querySelector(`.cpicker-inputs-${value}`);
+        [...CPicker.id.cpickerInputsWrapper.children].forEach((el) => {
+            el.classList.remove('show');
+        })
+        codeBlockEl.classList.add('show');
+        CPicker.id.cpickerInputAlpha.classList.add('show');
+    }, 
 
 }
 
