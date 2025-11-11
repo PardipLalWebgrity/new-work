@@ -398,6 +398,9 @@ const CPicker = {
         CPicker.updateRGBInputs(rgb);
         CPicker.updateHexInput(rgb);
         CPicker.updateSVBoxBaseColor(rgb);
+        Object.assign(CPicker.rgba, rgb);
+        console.log(CPicker.rgba.a);
+        result.style.backgroundColor = `rgba(${CPicker.rgba.r}, ${CPicker.rgba.g}, ${CPicker.rgba.b}, ${CPicker.rgba.a})`;  
     },
 
     alphaSliderInput: function(e) {        
