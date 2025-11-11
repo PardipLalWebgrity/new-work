@@ -44,11 +44,18 @@ const CPicker = {
 
     },
 
-    updateAlphaSliderUI: function(rgba) {
+    updateSVBoxBaseColor: function(rgb) {
+        this.id.cpickerSvbox.style.backgroundColor = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+        const hsv = CPicker.rgb2hsv(rgb);
+        CPicker.hsv.h = hsv.h;
+    }, 
+
+    updateAlphaSliderColorUI: function() {
+        const rgba = CPicker.rgba;
         this.id.cpickerAlphasliderBg.style.background = `linear-gradient(to right, rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, 0) 0%, rgb(${rgba.r}, ${rgba.g}, ${rgba.b}) 100%)`
     },    
 
-    updateRGBAInputs: function(rgb) {
+    updateRGBInputs: function(rgb) {
         this.id.inputrgbR.value = rgb.r;
         this.id.inputrgbG.value = rgb.g;
         this.id.inputrgbB.value = rgb.b;
@@ -64,8 +71,9 @@ const CPicker = {
     },
 
     updateSVBoxPointerUIByPointerEvent: function(e) {
-        const rgb = CPicker.getRGBThroughSVBoxXY(e.clientX, e.clientY);
-        const rgbCSS = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+        const rgb = CPicker.getRGBThroughSVBoxXY(e.clientX, e.clientY);        
+        Object.assign(CPicker.rgba, rgb);
+        const rgbCSS = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b}, ${CPicker.rgba.a})`;
         result.style.backgroundColor = rgbCSS;
 
         let x = e.clientX - 6;
@@ -78,9 +86,9 @@ const CPicker = {
         CPicker.id.cpickerSvboxPointer.style.left = x + 'px';
         CPicker.id.cpickerSvboxPointer.style.top = y + 'px';
 
-        CPicker.updateAlphaSliderUI(rgb);
-        CPicker.updateRGBAInputs(rgb);
-        CPicker.updateHexInput(rgb);        
+        CPicker.updateAlphaSliderColorUI(rgb);
+        CPicker.updateRGBInputs(rgb);
+        CPicker.updateHexInput(rgb);  
     },
 
 
@@ -115,6 +123,8 @@ const CPicker = {
         this.id.cpickerAlphasliderBg = document.querySelector('#cpicker-alphaslider-bg');
 
         this.id.inputsliderHue = document.querySelector('#inputslider-hue');
+        this.id.inputsliderAlpha = document.querySelector('#inputslider-alpha');
+        this.id.inputalpha = document.querySelector('#inputalpha');
 
         this.id.inputrgbR = document.querySelector('#inputrgb-r');
         this.id.inputrgbG = document.querySelector('#inputrgb-g');
@@ -136,16 +146,16 @@ const CPicker = {
         })
         codeBlockEl.classList.add('show');
         CPicker.id.cpickerInputAlpha.classList.add('show');
-
     },
 
     events: function() {
         this.id.cpickerCodeswitch.addEventListener('change', this.cpickerCodeswitchEventCallback);
         this.id.colorpalate.addEventListener('click', CPicker.click);
-        this.id.cpickerSvbox.addEventListener('pointerdown', CPicker.pointerDown);
-        this.id.cpickerSvbox.addEventListener('pointermove', CPicker.pointerMove);
-        this.id.cpickerSvbox.addEventListener('pointerup', CPicker.pointerUp);
-        this.id.inputsliderHue.addEventListener('input', CPicker.hueSliderInput)
+        this.id.cpickerSvbox.addEventListener('pointerdown', CPicker.svBoxPointerDown);
+        this.id.cpickerSvbox.addEventListener('pointermove', CPicker.svBoxPointerMove);
+        this.id.cpickerSvbox.addEventListener('pointerup', CPicker.svBoxPointerUp);
+        this.id.inputsliderHue.addEventListener('input', CPicker.hueSliderInput);
+        this.id.inputsliderAlpha.addEventListener('input', CPicker.alphaSliderInput);
     },
 
     rgb2hsv: function(rgb) {
@@ -363,17 +373,17 @@ const CPicker = {
         CPicker.updateUIByCSSRGBA(rgba);
     },
 
-    pointerDown: function(e) {
+    svBoxPointerDown: function(e) {
         CPicker.id.cpickerSvbox.setPointerCapture(e.pointerId);
         CPicker.updateSVBoxPointerUIByPointerEvent(e);
     },
 
-    pointerMove: function(e) {
+    svBoxPointerMove: function(e) {
         if (!CPicker.id.cpickerSvbox.hasPointerCapture(e.pointerId)) return;
         CPicker.updateSVBoxPointerUIByPointerEvent(e);
     },
 
-    pointerUp: function(e) {
+    svBoxPointerUp: function(e) {
         CPicker.id.cpickerSvbox.releasePointerCapture(e.pointerId);
         CPicker.updateSVBoxPointerUIByPointerEvent(e);
     },
@@ -384,9 +394,17 @@ const CPicker = {
 
     hueSliderInput: function(e) {        
         const percent = (CPicker.id.inputsliderHue.value / 360) * 100;
-        const rgb = CPicker.getHueGradientColorAt(percent);
-        CPicker.updateRGBAInputs(rgb);
+        const rgb = CPicker.getHueGradientColorAt(percent);        
+        CPicker.updateRGBInputs(rgb);
         CPicker.updateHexInput(rgb);
+        CPicker.updateSVBoxBaseColor(rgb);
+    },
+
+    alphaSliderInput: function(e) {        
+        const value = CPicker.id.inputsliderAlpha.value;
+        CPicker.id.inputalpha.value = value;
+        CPicker.rgba.a = value/100;
+        result.style.backgroundColor = `rgba(${CPicker.rgba.r}, ${CPicker.rgba.g}, ${CPicker.rgba.b}, ${CPicker.rgba.a})`;        
     },
 
 }
