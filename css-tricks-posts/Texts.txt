@@ -1,0 +1,1 @@
+* All non-printable content hide. when user print like header, footer etc.
