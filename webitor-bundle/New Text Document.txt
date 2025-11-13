@@ -1,0 +1,13 @@
+_setComponentHTMLCSS(){
+		this.shadowRoot.innerHTML = `
+			<link rel="stylesheet" href="${new URL('./style.css', import.meta.url)}">
+			<link rel="stylesheet" href="${new URL('./style.css',this.moduleURL).href}">
+			${this.html}
+		`;		
+	}
+
+
+
+
+
+* Component specific style.css url need to update by find-replace in Build file
