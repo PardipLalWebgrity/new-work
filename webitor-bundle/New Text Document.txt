@@ -10,4 +10,7 @@ _setComponentHTMLCSS(){
 
 
 
+
 * Component specific style.css url need to update by find-replace in Build file
+OR
+* <link rel="stylesheet" href="${(new URL('./style.css',this.moduleURL).href).replace('file:///E:/Pardip%20Lal/Resources/Webitor/HTML', 'http://localhost:8000')}">
