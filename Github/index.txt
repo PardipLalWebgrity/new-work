@@ -28,10 +28,18 @@ git commit --amend --no-edit = update last commit, can't change the message
 git commit --amend = it replaces the previous commit with same message
 git commit --amend -m "new message" = Update last commit message
 git reset --soft HEAD~1 = Undo last commit
-
-
-
-Git Tagging ...............
+git tag <tag-name> = add tag to last commit
+git tag -a <tagname> -m "message" = create tag with tagger’s name and email, date, message
+git tag <tagname> <commit-hash> = add Tag to specific commit
+git tag = Show list of tags
+git show <tagname> = Show specific tag details
+git push origin <tagname> = Push one specific tag
+git push origin --tags = Push all local tags
+git tag -d <tagname> = delete tag
+git stash = Git stash temporarily saves your uncommitted changes without committing them, and cleans your working directory.
+git stash list = This shows all your stashes.
+git stash push -m "message" = Stash with a message
+git stash apply stash@{1} = Bring back the changes from the specific stash
 
 
 
