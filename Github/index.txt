@@ -13,7 +13,7 @@ git init = create a new Git repository
 git status = Check which files are tracked
 git add <file> = To add a file to the staging area
 git add --all or git add -A = Stage all changes
-git status - See what is staged
+git status - See what is staged, in which branch
 git restore --staged <file> = bring back the last committed version of file
 git reset <file> = remove file from staging
 git commit -m "message" - Commit staged changes with a message
@@ -39,11 +39,46 @@ git tag -d <tagname> = delete tag
 git stash = Git stash temporarily saves your uncommitted changes without committing them, and cleans your working directory.
 git stash list = This shows all your stashes.
 git stash push -m "message" = Stash with a message
-git stash apply stash@{1} = Bring back the changes from the specific stash
+git stash apply stash@{n} = Bring back the changes from the specific stash
+git stash branch <branchname> = create branch and automatically move your latest stash onto it.
+git stash branch new-feature stash@{n} = create branch and move specific stash onto it.
+git stash show = See what was changed in the latest stash
+git stash apply = restores your last stashed into working directory.
+git stash pop = Apply the latest stash and remove it from the stack:
+git stash drop stash@{n} = Delete a specific stash
+git stash clear = Delete all your stashes at once
+git log = Show full commit history
+git log --oneline = Show a summary of commits
+git show <commit> = Show details of a specific commit
+git diff = diff between working directory and the last commit (unstaged changes)
+git diff --staged = shows what will be committed
+git diff <commit1> <commit2> = See what changed between any two commits
+git log --stat = which files were changed in each commit and how many lines were added or removed
+git log --graph = graph of your branch history
+git help <command> - See the manual page for a command
+git <command> --help = See help for a command (same as above)
+git <command> -h = See a quick summary of options
+git help --all = List all possible Git commands
+git help -g = List guides and concepts
+git branch new-branch-name = created a new branch
+git branch = List all branches in your repository
+git checkout branch-name = Switching Between Branches
+git branch -d branch-name = delete a branch
+git branch -m old-name new-name = Rename a branch
+git branch -D branch-name = To force delete an unmerged branch
+git merge branch-name = To combine the changes from one branch into another
+git merge --abort = Abort a merge
+
+
+
+
 
 
 
 ls = List files in the folder
 pwd = Print Working Directory.
+
+ssh-keygen -t ed25519 -C "your_email@example.com" = Create SSH keys
+cat ~/.ssh/id_ed25519.pub = it will print your public SSH Key
 
 
