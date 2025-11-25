@@ -1,0 +1,14 @@
+* In theme page
+  - show projects in grid way (Website Design, Resume, ID Card, etc)
+	- in every project
+	  + Website Design (create pages like Home, About, Contact, FAQ, Blogs)
+		
+In grid item, design :-
+* Project Thumbnail
+* Download 
+* View Live
+
+Note ...
+* Collect a design from Internet
+* Create that design in Hyperkia & create Bingo
+* share that Bingo
